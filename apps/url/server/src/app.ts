@@ -15,7 +15,7 @@ export async function createApp({ shortenUrl, lookupUrl }: MainDependencies): Pr
   app.use(cors());
 
   app.post('/api/shorten', async (req, res) => {
-    const original = req.body?.original || '';
+    const original = req.body.original;
     const short = await shortenUrl(original);
 
     res.status(201).send({
@@ -25,10 +25,20 @@ export async function createApp({ shortenUrl, lookupUrl }: MainDependencies): Pr
   });
 
   app.get('/s/:id', async (req, res) => {
-    const id = Number(req.params.id);
-    const original = await lookupUrl(id);
-    res.redirect(original);
+    try {
+      const id = Number(req.params.id);
+      const original = await lookupUrl(id);
+      res.redirect(original);
+    } catch (error) {
+      res.status(404).send('URL not found');
+    }
   });
+
+  // app.get('/s/:id', async (req, res) => {
+  //   const id = Number(req.params.id);
+  //   const original = await lookupUrl(id);
+  //   res.redirect(original);
+  // });
 
   return app;
 }

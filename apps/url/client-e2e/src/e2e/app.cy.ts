@@ -19,6 +19,6 @@ describe('url-client', () => {
 
     cy.wait('@shorten');
 
-    cy.get('#url-list').should('include.text', '/s/0');
+    cy.get('#urlList').should('include.text', '/s/0');
   });
 });

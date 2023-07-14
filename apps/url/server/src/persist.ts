@@ -19,7 +19,6 @@ export default async function getDB() {
 
 export async function shortenUrl(url: string): Promise<string> {
   const db = await getDB();
-
   const result = await db.run('INSERT INTO url (original) VALUES (?)', url);
   const id = result.lastID || (result.changes ? result.changes.lastID : null);
   if (!id) {
@@ -33,16 +32,16 @@ export async function shortenUrl(url: string): Promise<string> {
 
 export async function lookupUrl(shortenedId: number) {
   const db = await getDB();
-
+  console.log("SHORTENED URL NUMBER" + shortenedId);
   const result = await db.get(
-    'SELECT original FROM url WHERE id = (?)',
+    'SELECT original FROM url WHERE id = ?',
     shortenedId
   );
+  console.log(result);
 
   if (!result) {
-    throw new Error('URL not found');
+    throw new Error('URL not found in database');
   }
 
-  console.log(result);
   return result.original;
 }
