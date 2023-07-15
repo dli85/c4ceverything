@@ -1,26 +1,13 @@
 # Technical Challenge Epilogue: Improving quality of the codebase
 
-1. Adding error checks:
+1. Fixing the redirect error:
 
-# Everything
+There is an error in the code base regarding the types of URLS that are shortened. If we try to shorten the url "https://github.com/Code-4-Community/everything", then we find that the shortened url works just fine. However, if we try to shorten "github.com/Code-4-Community/everything" (no https), then the redirect does not redirect to the website despite the fact that we still entered a valid url. We notice that this occurs when we shorten any url without the "https" or "http". URLs that do not contain http or https such as google.com are still valid URLs, so we still want to resolve this issue.
 
-This is the C4C monorepo containing all of our active projects.
+When trying to debug this issue, we'll notice that when attempting to visit the shortened url, the final url will be "http://localhost:3333/s/{our original url}", which lets us discover the root of the issue: the res.redirect() method assumes that if the inputed url does not start with http or https, then it is a relative url and attaches it to the end of the current url. Thus, we can fix this issue by checking if our original url contains https or http. If it does contain either one, them we can just do redirect normally. If it doesn't, then we should append https:// to the front of the original url before redirecting to it. With our fix, the url shortner now works for both "https://google.com" and "google.com".
 
-Deployable units exist in `/apps`, inside each folder there is a README explaining how that unit is tested and deployed.
+2. Input Filtering
 
-Business logic and supporting library for those deployable units exist in `/libs`. These are composable units of software that are not coupled to a specific deployment framework or strategy, and are meant to be easily reused in future projects.
+To make our code better, we can add some basic input filtering. Firstly, we don't want to generate shortened URLs for empty strings, so we can check for that in the onsubmit method. Additionally, we can try making a URL object with the url string to see if it is valid. This will prevent the user from entering strings like "[]".
 
-The purpose of `README.md`s in this repository are to explain the usage of the application. The bare minimum you need to get it running. More detailed developer and public documentation exists on the wiki. `README.md`s will often link to relevant wiki pages.
-
-Links to Project `README.md`
-
-- [Monarch](./apps/monarch/README.md)
-- [c4cneu.com](./apps/dotcom/README.md)
-
-## 🔨 Development
-
-1. Install Node v16.x
-2. Clone this repo
-3. `yarn install`
-
-When adding new dependencies, use `yarn add` or its dev dependency equivalent. Thanks to Nx, each package will only be installed once, and each app knows how to bundle itself correctly based on its dependencies.
+3. Generating QR codes.

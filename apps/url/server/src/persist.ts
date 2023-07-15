@@ -32,7 +32,6 @@ export async function shortenUrl(url: string): Promise<string> {
 
 export async function lookupUrl(shortenedId: number) {
   const db = await getDB();
-  console.log("SHORTENED URL NUMBER" + shortenedId);
   const result = await db.get(
     'SELECT original FROM url WHERE id = ?',
     shortenedId

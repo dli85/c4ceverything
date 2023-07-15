@@ -25,7 +25,6 @@ export function App() {
       });
 
       const newUrl = response.data as Shortened;
-
       setUrls([newUrl, ...urls]);
     },
     [urls, setUrls]

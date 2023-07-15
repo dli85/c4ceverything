@@ -9,7 +9,7 @@ type MainDependencies = {
   lookupUrl: (shortId: number) => Promise<string>;
 };
 
-export async function createApp({ shortenUrl, lookupUrl }: MainDependencies): Promise<express.Application> {
+export async function createApp({ shortenUrl, lookupUrl }: MainDependencies) {
   const app = express();
   app.use(express.json());
   app.use(cors());
@@ -26,9 +26,14 @@ export async function createApp({ shortenUrl, lookupUrl }: MainDependencies): Pr
 
   app.get('/s/:id', async (req, res) => {
     try {
+      const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    
+      console.log('Full URL:', fullUrl);
       const id = Number(req.params.id);
       const original = await lookupUrl(id);
-      res.redirect(original);
+      //res.redirect(original);
+      res.redirect(original.startsWith('http') ? original : `http://${original}`);
+
     } catch (error) {
       res.status(404).send('URL not found');
     }

@@ -9,10 +9,38 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
   requestShortUrl,
 }) => {
   const [inputUrl, setInputUrl] = useState<string>('');
+
+  const isUrlValid = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   const onSubmit = useCallback(
     async (event: FormEvent) => {
       event.preventDefault();
-      await requestShortUrl(inputUrl);
+
+      // Basic input filtering
+
+      let trimmed = inputUrl.trim()
+      
+      if (trimmed === '') {
+        return;
+      }
+
+      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+        // Add the "http://" prefix to the URL if it is missing
+        trimmed = `http://${trimmed}`;
+      }
+      
+      if(!isUrlValid(trimmed)) {
+        return;
+      }
+
+      await requestShortUrl(trimmed);
       setInputUrl('');
     },
     [inputUrl, setInputUrl]
