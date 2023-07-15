@@ -11,3 +11,6 @@ When trying to debug this issue, we'll notice that when attempting to visit the 
 To make our code better, we can add some basic input filtering. Firstly, we don't want to generate shortened URLs for empty strings, so we can check for that in the onsubmit method. Additionally, we can try making a URL object with the url string to see if it is valid. This will prevent the user from entering strings like "[]".
 
 3. Generating QR codes.
+   We can further improve our codebase by adding the capability to generate a qr code that links to the inputed URL. The qr code is generated using a QR code library and displayed in the center of the screen that updates to reflect the newest shortened link.
+
+![alt text](example.png 'Title')
