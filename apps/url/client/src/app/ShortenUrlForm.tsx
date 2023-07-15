@@ -1,5 +1,6 @@
 import { Button, Input } from '@chakra-ui/react';
 import { FormEvent, useCallback, useState } from 'react';
+import QRCodeDisplay from './QRCodeDisplay';
 
 type ShortenUrlFormProps = {
   requestShortUrl: (original: string) => Promise<void>;
@@ -9,6 +10,8 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
   requestShortUrl,
 }) => {
   const [inputUrl, setInputUrl] = useState<string>('');
+  const [qrCodeUrl, setQRCodeUrl] = useState<string>('');
+
 
   const isUrlValid = (url: string) => {
     try {
@@ -42,8 +45,11 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
 
       await requestShortUrl(trimmed);
       setInputUrl('');
+
+      setQRCodeUrl(trimmed);
+
     },
-    [inputUrl, setInputUrl]
+    [inputUrl, setInputUrl, requestShortUrl]
   );
   return (
     <form onSubmit={onSubmit}>
@@ -60,6 +66,7 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
       <Button id="submit-btn" type="submit" colorScheme="teal" size="lg">
         Generate
       </Button>
+      {qrCodeUrl && <QRCodeDisplay url={qrCodeUrl} />}
     </form>
   );
 };
