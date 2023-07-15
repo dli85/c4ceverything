@@ -14,14 +14,26 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
   const [inputUrl, setInputUrl] = useState<string>('');
   const [qrCodeUrl, setQRCodeUrl] = useState<string>('');
 
-
-  const isUrlValid = (url: string) => {
-    try {
-      new URL(url);
-      return true;
-    } catch (error) {
+  const validateURL = (url: string) => {
+    // Regular expression pattern for URL validation
+    const urlPattern = /^(https?:\/\/)?([\w-]+\.){1,}\w{1,}(\/.*)?$/;
+  
+    // Check if the URL matches the pattern
+    if (!urlPattern.test(url)) {
+      return null;
+    }
+  
+    // Split the URL into parts
+    const parts = url.split('.');
+    const domain = parts[parts.length - 2];
+    const topLevelDomain = parts[parts.length - 1];
+  
+    // Check if the domain and top-level domain are present
+    if (!domain || !topLevelDomain) {
       return false;
     }
+  
+    return true;
   }
 
   const onSubmit = useCallback(
@@ -30,18 +42,14 @@ export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
 
       // Basic input filtering
 
-      let trimmed = inputUrl.trim()
-      
-      if (trimmed === '') {
-        return;
-      }
+      const trimmed = inputUrl.trim();
 
-      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-        // Add the "http://" prefix to the URL if it is missing
-        trimmed = `http://${trimmed}`;
-      }
+      // if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+      //   // Add the "http://" prefix to the URL if it is missing
+      //   trimmed = `http://${trimmed}`;
+      // }
       
-      if(!isUrlValid(trimmed)) {
+      if(!validateURL(trimmed)) {
         return;
       }
 
